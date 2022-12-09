@@ -22,8 +22,12 @@ If simple_mode = 1
 	Hotkey, !f, Build_Show
 } Else {
 	Hotkey, i, Start_Input_Mode
+	end_input_mode_hotkey = Escape
 	Hotkey, f, Show
 	Hotkey, ~LButton up, User_Input
+	Hotkey, ~WheelUp up, User_Input
+	Hotkey, ~WheelDown up, User_Input
+	Hotkey, ~MButton up, User_Input
 	Hotkey, j, Scroll_Down
 	Hotkey, k, Scroll_Up
 	input_mode = 0
@@ -68,19 +72,19 @@ Return
 
 User_Input:
 	If input_mode = 0
-		SetTimer, Build, 650 ; Debounce
+		SetTimer, Build, 350 ; Debounce
 Return
 
 Start_Input_Mode:
 	input_mode = 1
-	Hotkey, Esc, End_Input_Mode
+	Hotkey, %end_input_mode_hotkey%, End_Input_Mode
 	ToolTip, %A_Space%i%A_Space%, 0, 0
 	Suspend, On
 return
 End_Input_Mode:
 	Suspend, Off
 	input_mode = 0
-	Hotkey, Esc, OFF
+	Hotkey, %end_input_mode_hotkey%, OFF
 	ToolTip
 	GoSub, Build
 return
@@ -116,9 +120,12 @@ Build:
 		i = %A_Index%
 		match_controls_%i% = %A_LoopField%
 		ControlGetPos, x, y, , , %A_LoopField%, ahk_id %win_id%
-		x += %win_offset_x%
-		y += %win_offset_y%
-		Gui, Add, Button, x%x% y%y% w10 h10, %i%
+		if x > 0
+		{
+			x += %win_offset_x%
+			y += %win_offset_y%
+			Gui, Add, Button, x%x% y%y% w10 h10, %i%
+		}
 	}
 	controls_count = %i%
 	all_controls =
@@ -149,7 +156,8 @@ Show:
 	WinSet, Transparent, 230, ahk_id %gui_win_id%
 	WinSet, AlwaysOnTop, ON, ahk_id %gui_win_id%
 
-	GoSub, Stop_Keyboard_Event_Loop
+	If simple_mode <> 1
+		GoSub, Stop_Keyboard_Event_Loop
 	Input, selection, L1, {Escape}
 
 	control =
@@ -157,7 +165,7 @@ Show:
 	If control <>
 		ControlClick, %control%, ahk_id %win_id%
 	Gui, Hide
-	; To prevent Gui to be the active window in the next `Build` call, we need to wait
+	; To prevent Gui from being the active window in the next `Build` call, we need to wait
 	; for `Hide` to finish. Both WinSet, Bottom and WinMinimize did not help here.
 	Loop
 	{
@@ -167,8 +175,12 @@ Show:
 		Sleep, 100
 	}
 	is_showing = 0
-	GoSub, Start_Keyboard_Event_Loop
-	GoSub, User_Input
+	If simple_mode <> 1
+	{
+		GoSub, Start_Keyboard_Event_Loop
+		If control <>
+			GoSub, Build
+	}
 return
 
 Scroll_Down:
