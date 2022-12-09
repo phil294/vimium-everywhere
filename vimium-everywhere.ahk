@@ -117,17 +117,15 @@ Build:
 
 	Loop, PARSE, all_controls, `n
 	{
-		i = %A_Index%
-		match_controls_%i% = %A_LoopField%
+		match_controls_%A_Index% = %A_LoopField%
 		ControlGetPos, x, y, , , %A_LoopField%, ahk_id %win_id%
 		if x > 0
 		{
 			x += %win_offset_x%
 			y += %win_offset_y%
-			Gui, Add, Button, x%x% y%y% w10 h10, %i%
+			Gui, Add, Button, x%x% y%y% w10 h10, %A_Index%
 		}
 	}
-	controls_count = %i%
 	all_controls =
 
 	ToolTip
@@ -149,7 +147,16 @@ Show:
 		Return
 	is_showing = 1
 
+	WinGet, show_win_id, ID, A
 	Gui, Show, x0 y0, %app_name%
+	if show_win_id <> %win_id%
+	{
+		Sleep, 50
+		show_queued = 1
+		is_showing = 0
+		GoSub, Build
+		Return
+	}
 	WinGet, gui_win_id, ID, %app_name%
 	; WinActivate, ahk_id %gui_win_id%
 	WinSet, TransColor, %win_trans_color%, ahk_id %gui_win_id%
