@@ -34,6 +34,7 @@ If simple_mode = 1
 	input_mode = 0
 	keyboard_event_loop_stopped = 1
 	keyboard_event_loop_running = 0
+	build_pending = 0
 	is_building = 0
 	is_showing = 0
 	is_exclude_window = 0
@@ -78,8 +79,9 @@ Stop_Keyboard_Event_Loop:
 Return
 
 User_Input:
-	If input_mode = 0
-		SetTimer, Build, 350 ; Debounce
+	; So that should the `Show` Hotkey be fired before the next 350ms, a rebuild is preponed
+	build_pending = 1
+	SetTimer, Build, 350 ; Debounce
 Return
 
 Start_Input_Mode:
@@ -109,6 +111,7 @@ Return
 
 Build:
 	SetTimer, Build, OFF
+	build_pending = 0
 	If is_building = 1
 		Return
 	If is_showing = 1
@@ -177,6 +180,12 @@ Show:
 	}
 	If is_showing = 1
 		Return
+	If build_pending = 1
+	{
+		show_queued = 1
+		GoSub, Build
+		Return
+	}
 	is_showing = 1
 
 	WinGet, show_win_id, ID, A
