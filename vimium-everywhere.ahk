@@ -1,6 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Change to 1 for a simple Alt+F mapping and to skip the window detection magic:
 simple_mode = 0
+exclude_windows = VSCodium
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 app_name = Vimium Everywhere
@@ -31,6 +32,12 @@ If simple_mode = 1
 	Hotkey, j, Scroll_Down
 	Hotkey, k, Scroll_Up
 	input_mode = 0
+	keyboard_event_loop_stopped = 1
+	keyboard_event_loop_running = 0
+	is_building = 0
+	is_showing = 0
+	is_exclude_window = 0
+	show_queued = 0
 	GoSub, Build
 	keyboard_event_loop_running = 0
 	GoSub, Start_Keyboard_Event_Loop
@@ -83,6 +90,12 @@ Start_Input_Mode:
 return
 End_Input_Mode:
 	Suspend, Off
+	WinGetClass, win_class, A
+	If win_class in %exclude_windows%
+	{
+		Suspend, On
+		Return
+	}
 	input_mode = 0
 	Hotkey, %end_input_mode_hotkey%, OFF
 	ToolTip
@@ -100,9 +113,28 @@ Build:
 		Return
 	If is_showing = 1
 		Return
+	WinGet, build_active_win_id, ID, A
+	if simple_mode <> 1
+	{
+		WinGetClass, win_class, ahk_id %build_active_win_id%
+		If win_class in %exclude_windows%
+		{
+			is_exclude_window = 1
+			If input_mode = 0
+				; Exclude windows are excluded by simply running in input mode permanently
+				GoSub, Start_Input_Mode
+			Return
+		}
+		If is_exclude_window = 1
+		{
+			is_exclude_window = 0
+			GoSub, End_Input_Mode
+			Return
+		}
+		If input_mode = 1
+			Return
+	}
 	is_building = 1
-
-	WinGet, win_id, ID, A
 	Gui, Destroy
 	Gui, Color, %win_trans_color%
 	Gui, -Caption +ToolWindow
