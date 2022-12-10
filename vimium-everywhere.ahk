@@ -1,6 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Change to 1 for a simple Alt+F mapping and to skip the window detection magic:
 simple_mode = 0
+
+; Comma-separated list of window classes where this script should not be active. This property is ignored in simple mode. You can determine class names using e.g. WindowSpy or xprop.
 exclude_windows = VSCodium
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -18,19 +20,46 @@ WinGet, gui_win_id, ID, %app_name%
 WinGetPos, gui_win_offset_x, gui_win_offset_y, , , ahk_id %gui_win_id%
 Gui, Destroy
 
+/*
+There are generally two operations:
+	1. Build
+		Runs `WinGet,, ControlList` and `ControlGetPos` for each of those controls.
+		This is the performance bottleneck of this script (Linux). It can take *seconds*
+		with windows with many elements, even though these commands are quite optimized.
+		Also builds the Gui (invisible with visible action numbers as buttons)
+	2. Show
+		Shows the previously built Gui and asks the user for input, then interacts
+		with the selected control, if any.
+
+- Simple mode just runs these two one after another whenever fired via Hotkey.
+- Non-simple mode continuously listens for key or mouse input and then (debounced)
+	runs `Build` on the currently active window, so that the `Show` Hotkey action
+	appears to be almost instant. This approach is obviously much more CPU
+	intensive, and more prone to bugs.
+	Also, it adds `k` and `j` as alternative keys for `up` and `down`.
+	Also, it adds an "input" mode which can be activated and deactivated with `i`
+	and `Escape`, respectively. Once in input mode, all hotkeys (j, k and esp. f)
+	are deactivated which is handy for typing.
+*/
+
 If simple_mode = 1
 {
+	; Alt-F
 	Hotkey, !f, Build_Show
 } Else {
 	Hotkey, i, Start_Input_Mode
 	end_input_mode_hotkey = Escape
 	Hotkey, f, Show
+	
+	; Listening for mouse input:
 	Hotkey, ~LButton up, User_Input
 	Hotkey, ~WheelUp up, User_Input
 	Hotkey, ~WheelDown up, User_Input
 	Hotkey, ~MButton up, User_Input
+	
 	Hotkey, j, Scroll_Down
 	Hotkey, k, Scroll_Up
+
 	input_mode = 0
 	keyboard_event_loop_stopped = 1
 	keyboard_event_loop_running = 0
@@ -48,9 +77,12 @@ Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Async
+; Listening for key input.
+; This non-blocking input loop runs all the time in the background, except in
+; link selection when it is temporarily superceded by a one-key blocking input.
 Start_Keyboard_Event_Loop:
 	keyboard_event_loop_stopped = 0
+	; Continue as independent subthread so this does not block:
 	SetTimer, _kbd_event_loop, 1
 	Return
 	_kbd_event_loop:
@@ -62,6 +94,7 @@ Start_Keyboard_Event_Loop:
 	keyboard_event_loop_running = 1
 	Loop
 	{
+		; This is the official AHK way of listening for any key press:
 		Input, key, V L1 B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}
 		If keyboard_event_loop_stopped = 1
 		{
@@ -104,6 +137,7 @@ End_Input_Mode:
 	GoSub, Build
 return
 
+; Simple mode
 Build_Show:
 	GoSub, Build
 	GoSub, Show
@@ -144,20 +178,21 @@ Build:
 
 	ToolTip, Building..., 0, 0
 	; Can be very slow in general (~1 second on Firefox).
-	; Also, at-spi initialization takes several *seconds* the first time a control command runs.
-	WinGet, all_controls, ControlList, ahk_id %win_id%
-	WinGetPos, win_offset_x, win_offset_y, , , ahk_id %win_id%
+	; Also, at-spi initialization can take even longer the first time a control command runs.
+	WinGet, all_controls, ControlList, ahk_id %build_active_win_id%
+	WinGetPos, win_offset_x, win_offset_y, , , ahk_id %build_active_win_id%
 	win_offset_x -= %gui_win_offset_x%
 	win_offset_y -= %gui_win_offset_y%
 
 	Loop, PARSE, all_controls, `n
 	{
 		match_controls_%A_Index% = %A_LoopField%
-		ControlGetPos, x, y, , , %A_LoopField%, ahk_id %win_id%
+		ControlGetPos, x, y, , , %A_LoopField%, ahk_id %build_active_win_id%
 		if x > 0
 		{
 			x += %win_offset_x%
 			y += %win_offset_y%
+			; Does not yet show the Gui
 			Gui, Add, Button, x%x% y%y% w10 h10, %A_Index%
 		}
 	}
@@ -188,11 +223,12 @@ Show:
 	}
 	is_showing = 1
 
-	WinGet, show_win_id, ID, A
+	WinGet, show_active_win_id, ID, A
 	Gui, Show, x0 y0, %app_name%
-	if show_win_id <> %win_id%
+	if show_active_win_id <> %build_active_win_id%
 	{
-		Sleep, 50
+		; User switched application while building, need to rebuild
+		Sleep, 10
 		show_queued = 1
 		is_showing = 0
 		GoSub, Build
@@ -209,9 +245,10 @@ Show:
 	Input, selection, L1, {Escape}
 
 	control =
+	; Array access:
 	StringLeft, control, match_controls_%selection%, 10000
 	If control <>
-		ControlClick, %control%, ahk_id %win_id%
+		ControlClick, %control%, ahk_id %show_active_win_id%
 	Gui, Hide
 	; To prevent Gui from being the active window in the next `Build` call, we need to wait
 	; for `Hide` to finish. Both WinSet, Bottom and WinMinimize did not help here.
@@ -220,7 +257,7 @@ Show:
 		WinGetTitle, active_win_title, A
 		If active_win_title <> %app_name%
 			Break
-		Sleep, 100
+		Sleep, 50
 	}
 	is_showing = 0
 	If simple_mode <> 1
@@ -232,6 +269,7 @@ Show:
 return
 
 Scroll_Down:
+	; MouseClick, WD is not the right solution as this can change window focus in Linux
 	Send, {Down}
 Return
 Scroll_Up:
