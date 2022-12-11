@@ -205,17 +205,40 @@ Build:
 	win_offset_x -= %gui_win_offset_x%
 	win_offset_y -= %gui_win_offset_y%
 
+	control_count = 0
+	available_letters = QFDSAGWERT
+	decimal_factors = 1000|100|10|1 ; Exponentials of available_letters.length
 	Loop, PARSE, all_controls, `n
 	{
-		match_controls_%A_Index% = %A_LoopField%
 		ControlGetPos, x, y, , , %A_LoopField%, ahk_id %build_active_win_id%
-		if x > 0
+		If x <= 0
+			Continue
+		control_count++
+		If control_count > 999
+			Break
+		control = %A_LoopField%
+		x += %win_offset_x%
+		y += %win_offset_y%
+		match_letters =
+		rest = %control_count%
+		; Transform %control_count% into %match_letters% (by index) with the weirdess
+		; that is ahk legacy syntax:
+		Loop, PARSE, decimal_factors, |
 		{
-			x += %win_offset_x%
-			y += %win_offset_y%
-			; Does not yet show the Gui
-			Gui, Add, Button, x%x% y%y% w10 h10, %A_Index%
+			If control_count < %A_LoopField%
+				Continue
+			factor_pos = %rest%
+			factor_pos /= %A_LoopField%
+			factor_val = %factor_pos%
+			factor_val *= %A_LoopField%
+			rest -= %factor_val%
+			factor_pos++
+			StringMid, letter, available_letters, %factor_pos%, 1
+			match_letters = %match_letters%%letter%
 		}
+		; Does not yet show the Gui
+		Gui, Add, Button, x%x% y%y% w10 h10, %match_letters%
+		match_controls_%match_letters% = %control%
 	}
 	all_controls =
 
@@ -263,7 +286,19 @@ Show:
 
 	If simple_mode <> 1
 		GoSub, Stop_Keyboard_Event_Loop
-	Input, selection, L1, {Escape}
+	selection =
+	Loop
+	{
+		Input, key, L1, {Escape}{Space}
+		If ErrorLevel = EndKey:escape
+			selection =
+		If ErrorLevel <> Max
+			Break
+		selection = %selection%%key%
+		StringUpper, selection, selection
+		ToolTip, %A_Space%%selection%%A_Space% ... (Press SPACE to confirm or ESCAPE to cancel), 0, 0
+	}
+	ToolTip
 
 	control =
 	; Array access:
