@@ -115,6 +115,9 @@ Return
 User_Input:
 	; So that should the `Show` Hotkey be fired before the next 350ms, a rebuild is preponed
 	build_pending = 1
+	SetTimer, Build, 250 ; Debounce
+Return
+
 ; Watching window title
 Start_Win_Title_Change_Detection_Loop:
 	SetTimer, _title_change_detection_loop, 1
