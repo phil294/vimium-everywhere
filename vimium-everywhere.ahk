@@ -279,7 +279,7 @@ Show:
 		Return
 	}
 	WinGet, gui_win_id, ID, %app_name%
-	; WinActivate, ahk_id %gui_win_id%
+	WinActivate, ahk_id %gui_win_id%
 	WinSet, TransColor, %win_trans_color%, ahk_id %gui_win_id%
 	WinSet, Transparent, 230, ahk_id %gui_win_id%
 	WinSet, AlwaysOnTop, ON, ahk_id %gui_win_id%
