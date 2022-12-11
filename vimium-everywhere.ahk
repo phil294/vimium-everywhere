@@ -188,6 +188,9 @@ Build:
 		}
 		If input_mode = 1
 			Return
+		WinGetTitle, build_active_win_title, ahk_id %build_active_win_id%
+		If build_active_win_title = %app_name%
+			Return
 	}
 	is_building = 1
 	Gui, Destroy
