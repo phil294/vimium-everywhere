@@ -32,10 +32,10 @@ There are generally two operations:
 		with the selected control, if any.
 
 - Simple mode just runs these two one after another whenever fired via Hotkey.
-- Non-simple mode continuously listens for key or mouse input and then (debounced)
-	runs `Build` on the currently active window, so that the `Show` Hotkey action
-	appears to be almost instant. This approach is obviously much more CPU
-	intensive, and more prone to bugs.
+- Non-simple mode continuously listens for key or mouse input or active window
+	title change and then (debounced) runs `Build` on the currently active window,
+	so that the `Show` Hotkey action appears to be almost instant. This approach
+	is obviously much more CPU intensive, and more prone to bugs.
 	Also, it adds `k` and `j` as alternative keys for `up` and `down`.
 	Also, it adds an "input" mode which can be activated and deactivated with `i`
 	and `Escape`, respectively. Once in input mode, all hotkeys (j, k and esp. f)
@@ -71,6 +71,7 @@ If simple_mode = 1
 	GoSub, Build
 	keyboard_event_loop_running = 0
 	GoSub, Start_Keyboard_Event_Loop
+	GoSub, Start_Win_Title_Change_Detection_Loop
 }
 
 Return
@@ -114,7 +115,21 @@ Return
 User_Input:
 	; So that should the `Show` Hotkey be fired before the next 350ms, a rebuild is preponed
 	build_pending = 1
-	SetTimer, Build, 350 ; Debounce
+; Watching window title
+Start_Win_Title_Change_Detection_Loop:
+	SetTimer, _title_change_detection_loop, 1
+	Return
+	_title_change_detection_loop:
+	SetTimer, _title_change_detection_loop, OFF
+	Loop
+	{
+		WinGetTitle, change_detection_active_win_title, A
+		If change_detection_active_win_title <> %build_active_win_title%
+			tooltip UIUIUI
+		If change_detection_active_win_title <> %build_active_win_title%
+			GoSub, User_Input
+		Sleep, 300
+	}
 Return
 
 Start_Input_Mode:
