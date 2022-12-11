@@ -320,7 +320,12 @@ Show:
 	{
 		GoSub, Start_Keyboard_Event_Loop
 		If control <>
+		{
+			; To give the application some time to update its view based on the previous ControlClick.
+			; Will not work for network-based actions such as buttons in browsers though
+			Sleep, 50
 			GoSub, Build
+		}
 	}
 return
 
