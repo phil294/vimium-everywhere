@@ -245,6 +245,8 @@ Build:
 Return
 
 Show:
+	If control_count <= 0
+		Return
 	If is_building = 1
 	{
 		show_queued = 1
