@@ -120,19 +120,12 @@ Return
 
 ; Watching window title
 Start_Win_Title_Change_Detection_Loop:
-	SetTimer, _title_change_detection_loop, 1
+	SetTimer, _title_change_detection_loop, 300
 	Return
 	_title_change_detection_loop:
-	SetTimer, _title_change_detection_loop, OFF
-	Loop
-	{
 		WinGetTitle, change_detection_active_win_title, A
 		If change_detection_active_win_title <> %build_active_win_title%
-			tooltip UIUIUI
-		If change_detection_active_win_title <> %build_active_win_title%
 			GoSub, User_Input
-		Sleep, 300
-	}
 Return
 
 Start_Input_Mode:
