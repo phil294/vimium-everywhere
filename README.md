@@ -39,10 +39,12 @@ Once running, it can be quit by right-clicking the icon in task/tray bar.
 Program Type | Linux | Windows
 --- | --- | ---
 Native Windows Apps | ❌ | ✔
-Firefox | <details><summary>✔</summary>No further configuration necessary</details> | ❌
+Firefox | ✔ | ❌
 Chromium-based browser such as<br>Chrome, Brave | <details><summary>✔</summary>Chrome needs two adjustments: 1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer. 2. Add argument --force-renderer-accessibility. You can do so by editing the program's "Desktop file", or starting it from command line and passing it there. Example to start Chrome with full support: `ACCESSIBILITY_ENABLED=1 chrome --force-renderer-accessibility`<br><br>Theoretically, you can instead also enable the accessibility options inside chrome://accessibility but this does not seem to work reliably.</details></div> | ❌
 Electron-based application such as<br>VSCode, Slack, Spotify, Discord and [many more](https://www.electronjs.org/apps) | <details><summary>✔</summary>For each of those applications, you need to set the same adjustments like for Chrome (please click cell above). Some may offer a convenience settings flag too.</details> | ❌
 Java application | <details><summary>✔</summary>You need to install the ATK bridge: For Debian/Ubuntu-based systems, this is `apt install libatk-wrapper-java`. For Arch Linux based ones, it's `java-atk-wrapper-openjdk8` (depending on the Java version).</details> | ❌
+Gtk application | ✔ | ❌
+Qt5+ application | ✔ | ❌
 Old Qt4 application | <details><summary>✔</summary>In the rare case the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install `qt-at-spi`.</details> | ❌
 Other things such as<br>games, Tk Guis, Wine, Steam,<br>anything exotic that doesn't support AtSpi | <details><summary>❌</summary>According to the internet, these following environment variables may also help: `GNOME_ACCESSIBILITY=1`, `QT_ACCESSIBILITY=1`, `GTK_MODULES=gail:atk-bridge` and `QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1`. This is probably only relevant for outdated programs too, if ever.<br><br>If you're unsure about the state of some program, please open an issue so we can investigate.</details> | ❌
 
