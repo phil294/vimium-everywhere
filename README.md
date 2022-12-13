@@ -36,7 +36,7 @@ Once running, it can be quit by right-clicking the icon in task/tray bar.
 
 **Click on the 🢒 arrows instructions for the respective application type:**
 
-Program Type | Linux asdf asdf | Windows
+Program Type | Linux | Windows
 --- | --- | ---
 Native Windows Apps | ❌ | ✔
 Firefox | <details><summary>✔</summary>No further configuration necessary</details> | ❌
