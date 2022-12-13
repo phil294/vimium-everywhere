@@ -162,7 +162,7 @@ Build:
 	If is_showing = 1
 		Return
 	WinGet, build_active_win_id, ID, A
-	if simple_mode <> 1
+	If simple_mode <> 1
 	{
 		WinGetClass, win_class, ahk_id %build_active_win_id%
 		If win_class in %exclude_windows%
@@ -264,7 +264,7 @@ Show:
 
 	WinGet, show_active_win_id, ID, A
 	Gui, Show, x0 y0, %app_name%
-	if show_active_win_id <> %build_active_win_id%
+	If show_active_win_id <> %build_active_win_id%
 	{
 		; User switched application while building, need to rebuild
 		Sleep, 10
@@ -303,6 +303,7 @@ Show:
 	Gui, Hide
 	; To prevent Gui from being the active window in the next `Build` call, we need to wait
 	; for `Hide` to finish. Both WinSet, Bottom and WinMinimize did not help here.
+	; TODO: Use WinWaitNotActive (AHK_X11 does not yet offer this command)
 	Loop
 	{
 		WinGetTitle, active_win_title, A
