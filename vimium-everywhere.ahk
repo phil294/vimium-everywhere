@@ -204,7 +204,7 @@ Build:
 	Loop, PARSE, all_controls, `n
 	{
 		ControlGetPos, x, y, , , %A_LoopField%, ahk_id %build_active_win_id%
-		If x <= 0
+		If x < 0
 			Continue
 		control_count++
 		If control_count > 999
