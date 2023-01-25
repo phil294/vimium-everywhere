@@ -1,6 +1,6 @@
 # Vimium Everywhere
 
-A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** and **Windows** (partially (**EDIT: CURRENTLY BROKEN**)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
+A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** and **Windows** (partially (*edit: windows not supported right now, PR welcome*)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
 
 Short demo which shows how you can press <kbd>f</kbd> and then navigate anywhere (the key history at the bottom is just for demonstration purposes):
 
@@ -30,7 +30,7 @@ This tool was made and runs with AutoHotkey. It's a small script compatible with
 - Windows
     - Limited to native applications only (see table below). But where it does, it should be super fast.
     - Install [AutoHotkey](https://autohotkey.com/), then run `vimium-everywhere.ahk`.
-- MacOS: Not compatible. You might want to check out the closed-source app [Shortcat](https://shortcat.app) instead which appears to be very powerful.
+- MacOS: Not compatible. You might want to check out the closed-source apps [Shortcat](https://shortcat.app) or [Homerow](https://www.homerow.app) instead which appear to be very powerful.
 
 Once running, it can be quit by right-clicking the icon in task/tray bar.
 
@@ -46,7 +46,7 @@ Java application | <details><summary>✔</summary>You need to install the ATK br
 Gtk application | ✔ | ❌
 Qt5+ application | ✔ | ❌
 Old Qt4 application | <details><summary>✔</summary>In the rare case the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install `qt-at-spi`.</details> | ❌
-Other things such as<br>games, Tk Guis, Wine, Steam,<br>anything exotic that doesn't support AtSpi | <details><summary>❌</summary>According to the internet, these following environment variables may also help: `GNOME_ACCESSIBILITY=1`, `QT_ACCESSIBILITY=1`, `GTK_MODULES=gail:atk-bridge` and `QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1`. This is probably only relevant for outdated programs too, if ever.<br><br>If you're unsure about the state of some program, please open an issue so we can investigate.</details> | ❌
+Other things such as<br>games, Tk Guis, Wine, Steam,<br>anything exotic that doesn't support AtSpi | <details><summary>❌</summary>No chance to get them to work. For some others, according to the internet, these following environment variables may also help: `GNOME_ACCESSIBILITY=1`, `QT_ACCESSIBILITY=1`, `GTK_MODULES=gail:atk-bridge` and `QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1`. This is probably only relevant for outdated programs too, if ever.<br><br>If you're unsure about the state of some program, please open an issue so we can investigate.</details> | ❌
 
 <sub>(this list may not be 100% accurate, please help improving it)</sub>
 
