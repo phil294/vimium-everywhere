@@ -1,6 +1,6 @@
 # Vimium Everywhere
 
-A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** and **Windows** (partially (*edit: windows not supported right now, PR welcome*)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
+A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** (X11) and **Windows** (partially (*edit: windows not supported right now, PR welcome*)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
 
 Short demo which shows how you can press <kbd>f</kbd> and then navigate anywhere (the key history at the bottom is just for demonstration purposes):
 
