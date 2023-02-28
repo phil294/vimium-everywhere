@@ -30,7 +30,7 @@ This tool was made and runs with AutoHotkey. It's a small script compatible with
 - Windows
     - Limited to native applications only (see table below). But where it does, it should be super fast.
     - Install [AutoHotkey](https://autohotkey.com/), then run `vimium-everywhere.ahk`.
-- MacOS: Not compatible. You might want to check out the closed-source apps [Shortcat](https://shortcat.app) or [Homerow](https://www.homerow.app) instead which appear to be very powerful.
+- MacOS: Not compatible. You might want to check out [Scoot](https://github.com/mjrusso/scoot) or the closed-source apps [Shortcat](https://shortcat.app) or [Homerow](https://www.homerow.app) instead which appear to be very powerful.
 
 Once running, it can be quit by right-clicking the icon in task/tray bar.
 
