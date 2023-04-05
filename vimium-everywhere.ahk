@@ -1,6 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Change to 1 for a simple Alt+F mapping and to skip the window detection magic:
+; Change to 1 via env var for a simple Alt+F mapping and to skip the window detection magic:
 simple_mode = 0
+EnvGet, ENV_SIMPLE_MODE, SIMPLE_MODE
+If ENV_SIMPLE_MODE <>
+	If ENV_SIMPLE_MODE != 0
+		simple_mode = 1
 
 ; Comma-separated list of window classes where this script should not be active. This property is ignored in simple mode. You can determine class names using e.g. WindowSpy or xprop.
 exclude_windows = VSCodium

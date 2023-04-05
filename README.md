@@ -44,7 +44,7 @@ Other things such as<br>games, Tk Guis, Wine, Steam,<br>anything exotic that doe
 
 ## Usage
 
-In normal mode, the following Hotkeys are active:
+In **normal mode**, the following Hotkeys are active:
 Hotkey | Action
 --- | ---
 <kbd>f</kbd> | Show action links for current window (the main feature). Then, you can press any of the shown key sequences and confirm with <kbd>Space</kbd> or cancel with <kbd>Escape</kbd>. If the action links are somehow outdated, you can cancel and then press any key such as Ctrl to trigger a rebuild, and optionally immediately press <kbd>f</kbd> again.
@@ -53,11 +53,11 @@ Hotkey | Action
 <kbd>j</kbd> | Scroll down
 <kbd>k</kbd> | Scroll up
 
-There is no settings dialog yet, so you are encouraged to adjust the ahk script to your needs, esp. given its small size. If you make substantial changes, then please, in the spirit this project's GPL license, make your changes public, e.g. by forking this repository. Feature requests and bug reports are also welcome, just create a new issue above.
+There is no settings dialog yet, so you are encouraged to adjust the ahk script to your needs, esp. given its small size. If you make substantial changes, then please, in the spirit of this project's GPL license, make your changes public, e.g. by forking this repository. Feature requests and bug reports are also welcome, just create a new issue above.
 
 You can also change the list of exclude windows at the top of the script. For example, you might want to set it to `firefox,Google-chrome` if you are using normal [Vimium](https://github.com/philc/vimium) there, which is a lot more capable in browsers.
 
-You can switch to "simple mode" by setting the variable at the top of the script. Simple mode means: All magic (key press / window change detection) is removed, and only a single hotkey remains (default <kbd>Alt</kbd>+<kbd>f</kbd>) with does both building and link selection one after another. This is slower than normal mode, but is less resource hungry as there is no background activity at all, unless you press the Hotkey.
+You can switch to **simple mode** by setting the environment variable `SIMPLE_MODE` to `1`, e.g. run it like `SIMPLE_MODE=1 ./vimium-everywhere`. Simple mode means: All magic (key press / window change detection) is removed, and only a single hotkey remains (default <kbd>Alt</kbd>+<kbd>f</kbd>) with does both building and link selection one after another. This is slower than normal mode, but is less resource hungry as there is no background activity at all, unless you press the Hotkey.
 
 You can also change the `Hotkey` mappings in the source: For example, in simple mode, `!f` is the hotkey for showing links. `!` stands for <kbd>Alt</kbd> modifier. Other modifiers: `^` = <kbd>Ctrl</kbd>, `+` = <kbd>Shift</kbd>, `#` = <kbd>Super(Win)</kbd>, `<^>!` = <kbd>AltGr</kbd>.
 
