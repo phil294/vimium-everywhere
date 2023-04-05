@@ -1,8 +1,10 @@
 # Vimium Everywhere
 
-A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** and **Windows** (partially). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
+A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** (X11) and **Windows** (partially (*edit: windows not supported right now, PR welcome*)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
 
-![]()
+Short demo which shows how you can press <kbd>f</kbd> and then navigate anywhere (the key history at the bottom is just for demonstration purposes):
+
+https://user-images.githubusercontent.com/14108705/207453354-5f47356f-34f6-44c2-bee9-37cd0afd3ea6.mp4
 
 Please note that this tool is still quite unstable and may contain bugs.
 
@@ -13,32 +15,38 @@ Admittedly, it's not much of an actual "Vim mode" yet, just the core feature of 
 This tool was made and runs with AutoHotkey. It's a small script compatible with both [Windows AutoHotkey](https://autohotkey.com/) and [AHK_X11 Linux AutoHotkey](https://github.com/phil294/AHK_X11/).
 
 - Linux
-    1. Either
+    - Either
         - [download the latest binary](https://github.com/phil294/vimium-everywhere/releases), **or**
         - download and install [AHK_X11](https://github.com/phil294/AHK_X11/). It's recommended you download the `ahk_x11-no-gc` version because this script may crash a lot otherwise. Then also download the file `vimium-everywhere.ahk`.
-    1. Start the downloaded program via double click or command line. However, this will crash every now and then, especially under heavy usage. Thus, it's recommended to do this instead:
-           while true; do ./vimium-everywhere && break; done
+    - Start the downloaded program via double click or command line. However, this will crash every now and then, especially under heavy usage. Thus, it's recommended to do this instead:
+        ```bash
+        while true; do ./vimium-everywhere && break; done
+        ```
         This will automatically restart the process once it crashed.
-    1. By default, it probably doesn't work properly, because you also need to:
-           1. *Important*: Enable the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you may need to reboot.
-           2. *Important*: Most applications need some config flag toggled so they cooperate. You'll find details in the table below, where you can click on those little 🢒 arrows for the respective application type.
-       Once you have followed these steps, it should work great almost anywhere, like shown in the video at the top.
+    - By default, it probably doesn't work properly, because you also need to:
+        - *Important*: Enable the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you may need to reboot.
+        - *Important*: Most applications need some config flag toggled so they cooperate. You'll find details in the table below.
+    Once you have followed these steps, it should work great almost anywhere, like shown in the video at the top.
 - Windows
     - Limited to native applications only (see table below). But where it does, it should be super fast.
     - Install [AutoHotkey](https://autohotkey.com/), then run `vimium-everywhere.ahk`.
-- MacOS: Not compatible. You might want to check out the closed-source app [Shortcat](https://shortcat.app) instead which appears to be very powerful.
+- MacOS: Not compatible. You might want to check out [Scoot](https://github.com/mjrusso/scoot) or the closed-source apps [Shortcat](https://shortcat.app) or [Homerow](https://www.homerow.app) instead which appear to be very powerful.
 
 Once running, it can be quit by right-clicking the icon in task/tray bar.
 
+**Click on the 🢒 arrows instructions for the respective application type:**
+
 Program Type | Linux | Windows
 --- | --- | ---
-Native Windows Apps | ❌ | ✓
-Firefox | ✅ | ❌
-Chromium-based browser such as<br>Chrome, Brave | ✅ <details><summary> config</summary>Chrome needs two adjustments: 1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer. 2. Add argument --force-renderer-accessibility. You can do so by editing the program's "Desktop file", or starting it from command line and passing it there. Example to start Chrome with full support: `ACCESSIBILITY_ENABLED=1 chrome --force-renderer-accessibility`<br><br>Theoretically, you can instead also enable the accessibility options inside chrome://accessibility but this does not seem to work reliably.</details> | ❌
-Electron-based application such as<br>VSCode, Slack, Spotify, Discord and [many more](https://www.electronjs.org/apps) | ✅ <details><summary> config</summary>For each of those applications, you need to set the same adjustments like for Chrome (please click cell above). Some may offer a convenience settings flag too.</details> | ❌
-Java application | ✅ <details><summary> config</summary>You need to install the ATK bridge: For Debian/Ubuntu-based systems, this is `apt install libatk-wrapper-java`. For Arch Linux based ones, it's `java-atk-wrapper-openjdk8` (depending on the Java version).</details> | ❌
-Old Qt4 application | ✅ <details><summary> config</summary>In the rare case the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install `qt-at-spi`.</details> | ❌
-Other things such as<br>games, Tk Guis, Wine, Steam,<br>anything exotic that doesn't support AtSpi | ❌ <details><summary>...</summary>According to the internet, these following environment variables may also help: `GNOME_ACCESSIBILITY=1`, `QT_ACCESSIBILITY=1`, `GTK_MODULES=gail:atk-bridge` and `QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1`. This is probably only relevant for outdated programs too, if ever.<br><br>If you're unsure about the state of some program, please open an issue so we can investigate.</details> | ❌
+Native Windows Apps | ❌ | ✔
+Firefox | ✔ | ❌
+Chromium-based browser such as<br>Chrome, Brave | <details><summary>✔</summary>Chrome needs two adjustments: 1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer. 2. Add argument --force-renderer-accessibility. You can do so by editing the program's "Desktop file", or starting it from command line and passing it there. Example to start Chrome with full support: `ACCESSIBILITY_ENABLED=1 chrome --force-renderer-accessibility`<br><br>Theoretically, you can instead also enable the accessibility options inside chrome://accessibility but this does not seem to work reliably.</details></div> | ❌
+Electron-based application such as<br>VSCode, Slack, Spotify, Discord and [many more](https://www.electronjs.org/apps) | <details><summary>✔</summary>For each of those applications, you need to set the same adjustments like for Chrome (please click cell above). Some may offer a convenience settings flag too.</details> | ❌
+Java application | <details><summary>✔</summary>You need to install the ATK bridge: For Debian/Ubuntu-based systems, this is `apt install libatk-wrapper-java`. For Arch Linux based ones, it's `java-atk-wrapper-openjdk8` (depending on the Java version).</details> | ❌
+Gtk application | ✔ | ❌
+Qt5+ application | ✔ | ❌
+Old Qt4 application | <details><summary>✔</summary>In the rare case the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install `qt-at-spi`.</details> | ❌
+Other things such as<br>games, Tk Guis, Wine, Steam,<br>anything exotic that doesn't support AtSpi | <details><summary>❌</summary>No chance to get them to work. For some others, according to the internet, these following environment variables may also help: `GNOME_ACCESSIBILITY=1`, `QT_ACCESSIBILITY=1`, `GTK_MODULES=gail:atk-bridge` and `QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1`. This is probably only relevant for outdated programs too, if ever.<br><br>If you're unsure about the state of some program, please open an issue so we can investigate.</details> | ❌
 
 <sub>(this list may not be 100% accurate, please help improving it)</sub>
 
