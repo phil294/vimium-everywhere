@@ -10,7 +10,8 @@ If ENV_SIMPLE_MODE <>
 exclude_windows = VSCodium
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-app_name = Vimium Everywhere
+; Must be something else than the script or binary name to avoid mismatches from terminal title etc.
+app_name = Vimium Everywhere Gui
 
 ; Can be any color, but this value prevents a flickering until TransColor comes into effect (Linux):
 win_trans_color = rgba(0`,0`,0`,0)
@@ -18,8 +19,10 @@ win_trans_color = rgba(0`,0`,0`,0)
 ; Figure out the offset which an invisible, caption-less Gui window still always has.
 ; Expected is 0/0, but can be a few pixels.
 Gui, -Caption +ToolWindow
-Gui, Color, %win_trans_color%
 Gui, Show, x0 y0, %app_name%
+; TODO: Use WinWaitExist *command* instead (AHK_X11 does not yet offer it)
+GoSub, WinWaitExist
+; TODO: For all matches by app_name use compare by Gui WID instead (AHK_X11 does not yet offer it)
 WinGet, gui_win_id, ID, %app_name%
 WinGetPos, gui_win_offset_x, gui_win_offset_y, , , ahk_id %gui_win_id%
 Gui, Destroy
@@ -277,6 +280,8 @@ Show:
 		GoSub, Build
 		Return
 	}
+	; TODO: Use WinWaitExist *command* instead (AHK_X11 does not yet offer it)
+	GoSub, WinWaitExist
 	WinGet, gui_win_id, ID, %app_name%
 	WinActivate, ahk_id %gui_win_id%
 	WinSet, TransColor, %win_trans_color%, ahk_id %gui_win_id%
@@ -307,14 +312,8 @@ Show:
 	Gui, Hide
 	; To prevent Gui from being the active window in the next `Build` call, we need to wait
 	; for `Hide` to finish. Both WinSet, Bottom and WinMinimize did not help here.
-	; TODO: Use WinWaitNotActive (AHK_X11 does not yet offer this command)
-	Loop
-	{
-		WinGetTitle, active_win_title, A
-		If active_win_title <> %app_name%
-			Break
-		Sleep, 50
-	}
+	; TODO: Use WinWaitNotActive *command* instead (AHK_X11 does not yet offer it)
+	GoSub, WinWaitNotActive
 	is_showing = 0
 	If simple_mode <> 1
 	{
@@ -335,4 +334,27 @@ Scroll_Down:
 Return
 Scroll_Up:
 	Send, {Up}
+Return
+
+WinWaitNotActive:
+	Loop
+	{
+		WinGetTitle, active_win_title, A
+		If active_win_title <> %app_name%
+			Break
+		Sleep, 50
+	}
+Return
+WinWaitExist:
+	Loop
+	{
+		IfWinExist, %app_name%
+			Break
+		If A_Index > 20
+		{
+			MsgBox, Vimium Everywhere's internal window could not be found
+			Break
+		}
+		Sleep, 50
+	}
 Return
