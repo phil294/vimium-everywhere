@@ -1,6 +1,6 @@
 # Vimium Everywhere
 
-A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** (X11) and **Windows** (partially (*edit: windows not supported right now, PR welcome*)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
+A small experimental AutoHotkey script for system-wide keyboard navigation, compatible with **Linux** (X11, Wayland coming soon) and **Windows** (partially (*edit: windows not supported right now, PR welcome*)). It's a bit like normal [Vimium](https://github.com/philc/vimium), but for any application, not just browsers.
 
 Short demo which shows how you can press <kbd>f</kbd> and then navigate anywhere (the key history at the bottom is just for demonstration purposes):
 
@@ -17,12 +17,8 @@ This tool was made and runs with AutoHotkey. It's a small script compatible with
 - Linux
     - Either
         - [download the latest binary](https://github.com/phil294/vimium-everywhere/releases), **or**
-        - download and install [AHK_X11](https://github.com/phil294/AHK_X11/). It's recommended you download the `ahk_x11-no-gc` version because this script may crash a lot otherwise. Then also download the file `vimium-everywhere.ahk`.
-    - Start the downloaded program via double click or command line. However, this will crash every now and then, especially under heavy usage. Thus, it's recommended to do this instead:
-        ```bash
-        while true; do ./vimium-everywhere && break; done
-        ```
-        This will automatically restart the process once it crashed.
+        - download and install the latest version of [AHK_X11](https://github.com/phil294/AHK_X11/). Then also download the file `vimium-everywhere.ahk`.
+    - Start the downloaded program via double click or command line.
     - By default, it probably doesn't work properly, because you also need to:
         - *Important*: Enable the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you may need to reboot.
         - *Important*: Most applications need some config flag toggled so they cooperate. You'll find details in the table below.
@@ -40,7 +36,7 @@ Program Type | Linux | Windows
 --- | --- | ---
 Native Windows Apps | ❌ | ✔
 Firefox | ✔ | ❌
-Chromium-based browser such as<br>Chrome, Brave | <details><summary>✔</summary>Chrome needs two adjustments: 1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer. 2. Add argument --force-renderer-accessibility. You can do so by editing the program's "Desktop file", or starting it from command line and passing it there. Example to start Chrome with full support: `ACCESSIBILITY_ENABLED=1 chrome --force-renderer-accessibility`<br><br>Theoretically, you can instead also enable the accessibility options inside chrome://accessibility but this does not seem to work reliably.</details></div> | ❌
+Chromium-based browser such as<br>Chrome, Brave | <details><summary>✔</summary>Chrome needs two adjustments: 1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer. 2. Add argument --force-renderer-accessibility. You can do so by editing the program's "Desktop file", or starting it from command line and passing it there. Example to start Chrome with full support: `ACCESSIBILITY_ENABLED=1 chrome --force-renderer-accessibility`<br><br>Theoretically, you can instead also enable the accessibility options inside chrome://accessibility but this does not seem to work reliably.</details> | ❌
 Electron-based application such as<br>VSCode, Slack, Spotify, Discord and [many more](https://www.electronjs.org/apps) | <details><summary>✔</summary>For each of those applications, you need to set the same adjustments like for Chrome (please click cell above). Some may offer a convenience settings flag too.</details> | ❌
 Java application | <details><summary>✔</summary>You need to install the ATK bridge: For Debian/Ubuntu-based systems, this is `apt install libatk-wrapper-java`. For Arch Linux based ones, it's `java-atk-wrapper-openjdk8` (depending on the Java version).</details> | ❌
 Gtk application | ✔ | ❌
@@ -80,6 +76,8 @@ Apart from the required application settings above (also see: [Arch Wiki](https:
 #### Speed
 
 The internal querying of control information can be quite slow (somewhere between 0 and 3s). This problem should be eased by the normal mode's ahead of time querying feature. It doesn't seem like it can be improved much more besides that. AtSpi, the assistive interface for programs on Linux systems, simply does not expose powerful enough functions for performant access, so a deep recursive algorithm needs to be run repeatedly (internals of `WinGet,, ControlList`). Still, it works mostly alright even with several hundreds of elements. List-like elements with more than 1,000 children are skipped.
+
+Sometimes, normal mode will behave even *faster* than normal Vimium in the browser, sometimes slower - it depends how quickly you type / switch windows.
 
 Also, the startup can take multiple seconds, so please stand by while the first `Building...` ToolTip may load. This initialization phase seems to be dependent on the amount of open windows and/or system uptime (??)
 
