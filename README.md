@@ -61,7 +61,7 @@ There is no settings dialog yet, so you are encouraged to adjust the ahk script 
 
 You can also change the list of exclude windows at the top of the script. For example, you might want to set it to `firefox,Google-chrome` if you are using normal [Vimium](https://github.com/philc/vimium) there, which is a lot more capable in browsers.
 
-You can switch to **simple mode** by setting the environment variable `SIMPLE_MODE` to `1`, e.g. run it like `SIMPLE_MODE=1 ./vimium-everywhere`. Simple mode means: All magic (key press / window change detection) is removed, and only a single hotkey remains (default <kbd>Alt</kbd>+<kbd>f</kbd>) with does both building and link selection one after another. This is slower than normal mode, but is less resource hungry as there is no background activity at all, unless you press the Hotkey.
+You can switch to **simple mode** by setting the environment variable `SIMPLE_MODE` to `1`, e.g. run it like `SIMPLE_MODE=1 ./vimium-everywhere`. Simple mode means: All magic (key press / window change detection) is removed, and only a single hotkey remains (default <kbd>Alt</kbd>+<kbd>f</kbd>) with does both building and link selection one after another. This is slower than normal mode, but is *way* less resource hungry as there is no background activity at all, unless you press the Hotkey. Thus, **simple mode is recommended**.
 
 You can also change the `Hotkey` mappings in the source: For example, in simple mode, `!f` is the hotkey for showing links. `!` stands for <kbd>Alt</kbd> modifier. Other modifiers: `^` = <kbd>Ctrl</kbd>, `+` = <kbd>Shift</kbd>, `#` = <kbd>Super(Win)</kbd>, `<^>!` = <kbd>AltGr</kbd>.
 
