@@ -16,10 +16,11 @@ app_name = Vimium Everywhere Gui
 ; Can be any color, but this value prevents a flickering until TransColor comes into effect (Linux):
 win_trans_color = rgba(0`,0`,0`,0)
 
+DetectHiddenWindows, On
 ; Figure out the offset which an invisible, caption-less Gui window still always has.
 ; Expected is 0/0, but can be a few pixels.
-Gui, -Caption +ToolWindow
-Gui, Show, x0 y0, %app_name%
+Gui, -Caption +ToolWindow +0x80000000 +E0x8000000
+Gui, Show, x0 y0, %app_name% ; TODO also match pid somehow
 ; TODO: Use WinWaitExist *command* instead (AHK_X11 does not yet offer it)
 GoSub, WinWaitExist
 ; TODO: For all matches by app_name use compare by Gui WID instead (AHK_X11 does not yet offer it)
@@ -282,8 +283,8 @@ Show:
 	}
 	; TODO: Use WinWaitExist *command* instead (AHK_X11 does not yet offer it)
 	GoSub, WinWaitExist
+	; Because of 0x80000000, our gui never takes focus unless we force it with WinActivate.
 	WinGet, gui_win_id, ID, %app_name%
-	WinActivate, ahk_id %gui_win_id%
 	WinSet, TransColor, %win_trans_color%, ahk_id %gui_win_id%
 	WinSet, Transparent, 230, ahk_id %gui_win_id%
 	WinSet, AlwaysOnTop, ON, ahk_id %gui_win_id%
@@ -310,10 +311,6 @@ Show:
 	If control <>
 		ControlClick, %control%, ahk_id %show_active_win_id%
 	Gui, Hide
-	; To prevent Gui from being the active window in the next `Build` call, we need to wait
-	; for `Hide` to finish. Both WinSet, Bottom and WinMinimize did not help here.
-	; TODO: Use WinWaitNotActive *command* instead (AHK_X11 does not yet offer it)
-	GoSub, WinWaitNotActive
 	is_showing = 0
 	If simple_mode <> 1
 	{
@@ -336,15 +333,6 @@ Scroll_Up:
 	Send, {Up}
 Return
 
-WinWaitNotActive:
-	Loop
-	{
-		WinGetTitle, active_win_title, A
-		If active_win_title <> %app_name%
-			Break
-		Sleep, 50
-	}
-Return
 WinWaitExist:
 	Loop
 	{
