@@ -36,7 +36,7 @@ Once running, it can be quit by right-clicking the icon in task/tray bar.
 Program Type | Linux | Windows
 --- | --- | ---
 Native Windows Apps | ❌ | ✔
-Firefox | ✔ | ❌
+Firefox | <details><summary>✔</summary>You need to set the environment variable `GNOME_ACCESSIBILITY=1`. You can achieve this e.g. by putting this into `/etc/environment` and rebooting.</details> | ❌
 Chromium-based browser such as<br>Chrome, Brave | <details><summary>✔</summary>Chrome needs two adjustments: 1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer. 2. Add argument --force-renderer-accessibility. You can do so by editing the program's "Desktop file", or starting it from command line and passing it there. Example to start Chrome with full support: `ACCESSIBILITY_ENABLED=1 chrome --force-renderer-accessibility`<br><br>Theoretically, you can instead also enable the accessibility options inside chrome://accessibility but this does not seem to work reliably.</details> | ❌
 Electron-based application such as<br>VSCode, Slack, Spotify, Discord and [many more](https://www.electronjs.org/apps) | <details><summary>✔</summary>For each of those applications, you need to set the same adjustments like for Chrome (please click cell above). Some may offer a convenience settings flag too.</details> | ❌
 Java application | <details><summary>✔</summary>You need to install the ATK bridge: For Debian/Ubuntu-based systems, this is `apt install libatk-wrapper-java`. For Arch Linux based ones, it's `java-atk-wrapper-openjdk8` (depending on the Java version).</details> | ❌
