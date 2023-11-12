@@ -23,6 +23,7 @@ This tool was made and runs with AutoHotkey. It's a small script compatible with
         - *Important*: Enable the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you may need to reboot.
         - *Important*: Most applications need some config flag toggled so they cooperate. You'll find details in the table below.
     Once you have followed these steps, it should work great almost anywhere, like shown in the video at the top.
+    Alternative apps: [goodnight-mouse](https://github.com/rpbritton/goodnight-mouse)
 - Windows (currently broken)
     - Limited to native applications only (see table below). But where it does, it should be super fast.
     - Install [AutoHotkey](https://autohotkey.com/), then run `vimium-everywhere.ahk`.
